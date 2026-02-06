@@ -79,4 +79,4 @@ class IdentityStore:
             versions=snapshot.get("versions", []),
         )
         self._write_identity(identity)
-        self.audit.log("IDENTITY_UPDATE", {"reason": "rollback"})
+        self.audit.log("ROLLBACK", {"scope": "identity"})

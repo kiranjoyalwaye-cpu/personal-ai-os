@@ -69,4 +69,4 @@ class GoalStore:
     def rollback(self, snapshot: List[Dict[str, Any]]) -> None:
         goals = [Goal(**entry) for entry in snapshot]
         self._write_goals(goals)
-        self.audit.log("GOAL_UPDATE", {"reason": "rollback"})
+        self.audit.log("ROLLBACK", {"scope": "goals"})

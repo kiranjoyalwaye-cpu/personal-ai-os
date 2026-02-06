@@ -2,14 +2,14 @@
 from __future__ import annotations
 
 import json
-import math
 import uuid
 from dataclasses import dataclass, asdict
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from ai_os.audit import AuditLogger
+from ai_os.decay import apply_decay
 
 
 @dataclass
@@ -61,13 +61,13 @@ class MemoryStore:
         self.audit.log("MEMORY_ADD", {"id": entry.id, "text": text})
         return entry
 
-    def delete_memory(self, memory_id: str) -> bool:
+    def delete_memory(self, memory_id: str, reason: str = "manual") -> bool:
         memories = self._read_memories()
         remaining = [m for m in memories if m.id != memory_id]
         if len(remaining) == len(memories):
             return False
         self._write_memories(remaining)
-        self.audit.log("MEMORY_DELETE", {"id": memory_id})
+        self.audit.log("MEMORY_DELETE", {"id": memory_id, "reason": reason})
         return True
 
     def decay_memories(self) -> None:
@@ -77,8 +77,7 @@ class MemoryStore:
         for memory in memories:
             last_accessed = datetime.fromisoformat(memory.last_accessed.replace("Z", ""))
             age_days = max((now - last_accessed).total_seconds() / 86400, 0.0)
-            decay_rate = 0.02 if memory.emotion_score >= 0.6 else 0.06
-            new_importance = max(memory.importance * math.exp(-decay_rate * age_days), 0.0)
+            new_importance = apply_decay(memory.importance, memory.emotion_score, age_days)
             if new_importance < 0.1:
                 self.audit.log(
                     "MEMORY_DELETE",
@@ -88,7 +87,7 @@ class MemoryStore:
             memory.importance = round(new_importance, 4)
             remaining.append(memory)
         self._write_memories(remaining)
-        self.audit.log("DECAY", {"remaining": len(remaining)})
+        self.audit.log("MEMORY_DECAY", {"remaining": len(remaining)})
 
     def retrieve_relevant(self, limit: int = 5) -> List[MemoryEntry]:
         memories = self._read_memories()
@@ -104,8 +103,9 @@ class MemoryStore:
         selected = sorted_memories[:limit]
         updated_memories = []
         now_iso = datetime.utcnow().isoformat() + "Z"
+        selected_ids = {m.id for m in selected}
         for memory in memories:
-            if memory.id in {m.id for m in selected}:
+            if memory.id in selected_ids:
                 memory.last_accessed = now_iso
             updated_memories.append(memory)
         self._write_memories(updated_memories)
@@ -117,4 +117,4 @@ class MemoryStore:
     def rollback(self, snapshot: List[Dict[str, Any]]) -> None:
         memories = [MemoryEntry(**entry) for entry in snapshot]
         self._write_memories(memories)
-        self.audit.log("MEMORY_DELETE", {"reason": "rollback"})
+        self.audit.log("ROLLBACK", {"scope": "memory"})

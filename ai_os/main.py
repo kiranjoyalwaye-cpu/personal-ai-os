@@ -80,6 +80,16 @@ def main() -> None:
                 continue
             print("Usage: /show memory|goals|identity")
             continue
+        if command == "/snapshot":
+            snapshot_id = kernel.create_snapshot()
+            print(f"Snapshot created: {snapshot_id}")
+            continue
+        if command == "/rollback":
+            if not argument:
+                print("Usage: /rollback snapshot_id")
+                continue
+            print(kernel.rollback_snapshot(argument))
+            continue
 
         response = kernel.handle_user_input(user_input)
         print(response)
