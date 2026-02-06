@@ -1,7 +1,6 @@
 """FastAPI routes for the Personal AI OS GUI."""
 from __future__ import annotations
 
-from dataclasses import asdict
 from pathlib import Path
 from typing import Any, Dict, List
 
@@ -35,7 +34,7 @@ class GoalCreate(BaseModel):
 def build_kernel() -> AIOperatingSystem:
     """Create a kernel instance bound to the shared storage directory."""
     root = Path(__file__).resolve().parents[2]
-    storage_root = root / "ai_os" / "storage"
+    storage_root = root / "storage"
     return AIOperatingSystem(storage_root)
 
 

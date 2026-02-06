@@ -89,6 +89,14 @@ li:last-child {
   gap: 12px;
 }
 
+.agent-card {
+  border: 1px solid #ececf2;
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 8px;
+  background: #fafafa;
+}
+
 pre {
   background: #111827;
   color: #e5e7eb;

@@ -6,7 +6,6 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from ai_os.audit import AuditLogger
 from ai_os.os_kernel import AIOperatingSystem
 from multi_agent.agent_memory import AgentStateStore
 from multi_agent.agents import Agent, AgentResponse, default_agents

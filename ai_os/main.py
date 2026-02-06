@@ -29,7 +29,7 @@ def prompt_float(label: str, default: float) -> float:
 
 
 def main() -> None:
-    storage_root = Path(__file__).resolve().parent / "storage"
+    storage_root = Path(__file__).resolve().parents[1] / "storage"
     kernel = AIOperatingSystem(storage_root)
 
     print("Personal AI OS kernel started. Type /exit to quit.")

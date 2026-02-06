@@ -25,7 +25,7 @@ class OverrideRequest(BaseModel):
 
 def build_coordinator() -> Coordinator:
     root = Path(__file__).resolve().parents[2]
-    storage_root = root / "ai_os" / "storage"
+    storage_root = root / "storage"
     return Coordinator(storage_root)
 
 
@@ -38,8 +38,22 @@ def run_agents(payload: AgentRunRequest) -> Dict[str, Any]:
     return coordinator.run(payload.query, payload.agent_name)
 
 
+@router.post("/agents")
+def run_agents_alias(payload: AgentRunRequest) -> Dict[str, Any]:
+    """Alias to run the agent pipeline."""
+    coordinator = build_coordinator()
+    return coordinator.run(payload.query, payload.agent_name)
+
+
 @router.get("/agents/state")
 def get_state() -> Dict[str, Any]:
+    coordinator = build_coordinator()
+    return coordinator.state()
+
+
+@router.get("/agents")
+def get_state_alias() -> Dict[str, Any]:
+    """Alias to fetch agent state."""
     coordinator = build_coordinator()
     return coordinator.state()
 

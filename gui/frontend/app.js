@@ -86,6 +86,28 @@ async function loadAudit() {
   log.textContent = payload.lines.join("\n");
 }
 
+async function loadAgents() {
+  const container = document.getElementById("agent-output-list");
+  container.innerHTML = "";
+  const state = await fetchJson("/agents");
+  const history = state.history || [];
+  if (history.length === 0) {
+    container.innerHTML = "<p>No agent runs recorded yet.</p>";
+    return;
+  }
+  const latest = history[history.length - 1];
+  (latest.responses || []).forEach((response) => {
+    const card = document.createElement("div");
+    card.className = "agent-card";
+    card.innerHTML = `
+      <strong>${response.name}</strong> (${response.role})<br />
+      <small>${response.timestamp}</small>
+      <p>${response.output}</p>
+    `;
+    container.appendChild(card);
+  });
+}
+
 async function loadSnapshots() {
   const list = document.getElementById("snapshot-list");
   list.innerHTML = "";
@@ -108,7 +130,14 @@ async function loadSnapshots() {
 }
 
 async function refreshAll() {
-  await Promise.all([loadMemories(), loadIdentity(), loadGoals(), loadAudit(), loadSnapshots()]);
+  await Promise.all([
+    loadMemories(),
+    loadIdentity(),
+    loadGoals(),
+    loadAgents(),
+    loadAudit(),
+    loadSnapshots(),
+  ]);
 }
 
 document.getElementById("memory-form").addEventListener("submit", async (event) => {
