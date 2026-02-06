@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Multi-Agent Control Room</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Multi-Agent Control Room</h1>
+      <p>Transparent multi-agent reasoning pipeline with human control.</p>
+      <nav>
+        <a href="index.html">Back to OS Dashboard</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="panel" id="control-panel">
+        <h2>Control Panel</h2>
+        <form id="agent-run-form">
+          <input type="text" id="agent-query" placeholder="User query" required />
+          <select id="agent-select">
+            <option value="">Run full pipeline</option>
+            <option value="Analyst">Analyst</option>
+            <option value="Planner">Planner</option>
+            <option value="Critic">Critic</option>
+            <option value="Safety Auditor">Safety Auditor</option>
+          </select>
+          <button type="submit">Run Agents</button>
+        </form>
+        <div class="button-row">
+          <button id="pause-btn" class="secondary">Pause</button>
+          <button id="snapshot-btn">Snapshot</button>
+          <button id="rollback-btn" class="secondary">Rollback Latest</button>
+        </div>
+        <form id="override-form">
+          <input type="text" id="override-text" placeholder="Human override note" required />
+          <button type="submit" class="secondary">Override</button>
+        </form>
+      </section>
+
+      <section class="panel" id="agent-panel">
+        <h2>Agent Outputs</h2>
+        <div id="agent-cards"></div>
+      </section>
+
+      <section class="panel" id="timeline-panel">
+        <h2>Interaction Timeline</h2>
+        <ul id="timeline"></ul>
+      </section>
+
+      <section class="panel" id="memory-sync-panel">
+        <h2>Memory Sync</h2>
+        <ul id="memory-sync"></ul>
+      </section>
+    </main>
+
+    <script src="agents.js"></script>
+  </body>
+</html>
