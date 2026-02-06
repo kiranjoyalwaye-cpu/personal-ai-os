@@ -4,6 +4,7 @@ from __future__ import annotations
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from gui.backend.agents_api import router as agents_router
 from gui.backend.api import router
 
 
@@ -18,6 +19,7 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
     app.include_router(router)
+    app.include_router(agents_router)
     return app
 
 
